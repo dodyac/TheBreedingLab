@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvMoney"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Money: $2000"
+        android:textSize="18sp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvReputation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Reputation: 0 - Novice Breeder"
+        android:textSize="18sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:id="@+id/tilMother"
+        android:hint="Select Mother"
+        android:layout_marginTop="16dp"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAutofill="no"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:id="@+id/tilFather"
+        android:hint="Select Father"
+        android:layout_marginTop="16dp"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAutofill="no"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_marginTop="10dp"
+        android:id="@+id/btnParentProfiles"
+        app:cornerRadius="6dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="View Parent Profiles" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnBreed"
+        app:cornerRadius="6dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="Breed Pair" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLitterSummary"
+        app:cornerRadius="6dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="Litter Summary" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnPriceMenu"
+        app:cornerRadius="6dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="Price Menu &amp; Sell Puppies" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnPlayerStats"
+        app:cornerRadius="6dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="View Player Stats" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_marginTop="16dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/puppies"/>
+</LinearLayout>
