@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:padding="16dp"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
     android:orientation="vertical"
-    android:layout_height="wrap_content">
+    android:padding="16dp">
 
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/puppy_details"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_height="wrap_content"
-        android:text="Puppy Details"/>
+        android:textStyle="bold" />
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvPuppy"
         android:layout_width="match_parent"
-        android:layout_marginTop="16dp"
         android:layout_height="wrap_content"
-        android:id="@+id/puppy"/>
+        android:layout_marginTop="16dp"
+        tools:text="@string/app_name" />
 </LinearLayout>

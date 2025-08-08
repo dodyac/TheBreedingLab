@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/player_statistics"
+        android:textSize="18sp"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvMoney"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        tools:text="Money: $50" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvReputation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        tools:text="Reputation: 26.5" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvCurrentTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        tools:text="Current Title: Novice Breeder" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvNextTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        tools:text="Next Title: Amateur Breeder" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvPointNeeded"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        tools:text="Points Needed: 273.5" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/breeding_record"
+        android:textSize="18sp"
+        android:layout_marginTop="@dimen/d16dp"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvTotalPuppiesBred"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        tools:text="Total Puppies Bred: 9" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvTotalPuppiesSold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        tools:text="Total Puppies Sold: 0" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvSaleRate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        tools:text="Sale Rate: 0%" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/reputation_titles"
+        android:textSize="18sp"
+        android:layout_marginTop="@dimen/d16dp"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvReputationTitles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        tools:text="@string/app_name" />
+</LinearLayout>

@@ -23,7 +23,15 @@ data class Player(
             .maxByOrNull { it.key }?.value ?: "Novice Breeder"
     }
 
-    private fun canAfford(amount: Int) = money >= amount
+    fun getNextReputationMilestone(): Pair<String, Int>? {
+        val sortedMilestones = reputationMilestones.entries.sortedBy { it.key }
+        val next = sortedMilestones.firstOrNull { reputation < it.key }
+        return next?.let { it.value to (it.key - reputation) }
+    }
+
+    private fun canAfford(amount: Int): Boolean {
+        return money >= amount
+    }
 
     fun spend(amount: Int): Boolean = if (canAfford(amount)) {
         money -= amount

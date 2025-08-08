@@ -7,13 +7,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".MainActivity">
+    tools:context=".ui.MainActivity">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvMoney"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="@dimen/d30dp"
         android:text="Money: $2000"
         android:textSize="18sp" />
 
@@ -26,12 +27,12 @@
         android:textSize="18sp" />
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilMother"
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
-        android:id="@+id/tilMother"
-        android:hint="Select Mother"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_height="wrap_content">
+        android:hint="@string/select_mother">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:layout_width="match_parent"
@@ -41,12 +42,12 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilFather"
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
-        android:id="@+id/tilFather"
-        android:hint="Select Father"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_height="wrap_content">
+        android:hint="@string/select_father">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:layout_width="match_parent"
@@ -56,44 +57,44 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:layout_marginTop="10dp"
         android:id="@+id/btnParentProfiles"
-        app:cornerRadius="6dp"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:text="View Parent Profiles" />
+        android:layout_marginTop="10dp"
+        android:text="@string/view_parent_profiles"
+        app:cornerRadius="6dp" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnBreed"
-        app:cornerRadius="6dp"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:text="Breed Pair" />
+        android:text="@string/breed_pair"
+        app:cornerRadius="6dp" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLitterSummary"
-        app:cornerRadius="6dp"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:text="Litter Summary" />
+        android:text="@string/litter_summary"
+        app:cornerRadius="6dp" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnPriceMenu"
-        app:cornerRadius="6dp"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:text="Price Menu &amp; Sell Puppies" />
+        android:text="@string/price_menu_amp_sell_puppies"
+        app:cornerRadius="6dp" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnPlayerStats"
-        app:cornerRadius="6dp"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:text="View Player Stats" />
+        android:text="@string/view_player_stats"
+        app:cornerRadius="6dp" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPuppies"
         android:layout_width="match_parent"
-        android:layout_marginTop="16dp"
         android:layout_height="wrap_content"
-        android:id="@+id/puppies"/>
+        android:layout_marginTop="16dp" />
 </LinearLayout>

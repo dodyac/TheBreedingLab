@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/litter_summary"
+        android:textSize="18sp"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvEmptyPuppies"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:layout_marginTop="16dp"
+        android:text="@string/no_puppies_to_summarize" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:id="@+id/layoutPuppies"
+        android:layout_marginTop="16dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvTotalPuppies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Total Puppies: 9" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvSexRatio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="Sex Ratio (Males:Females) = 6:3" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvYellowCoat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="Yellow Coat: 9" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvTailTypes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="Tail Types: Short Tail (5), Long Tail (4)" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvPRA"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="PRA: Carrier (7), Affected (2)" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvEIC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="EIC: Carrier (9)" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvHNPK"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="HNPK: Carrier (6), Affected (3)" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvCNM"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="CNM: Carrier (9)" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvSD2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="SD2: Affected (5), Carrier (4)" />
+    </LinearLayout>
+</LinearLayout>

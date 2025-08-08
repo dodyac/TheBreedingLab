@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">The Breeding Lab</string>
+    <string name="parent_profiles">Parent Profiles</string>
+    <string name="puppy_details">Puppy Details</string>
+    <string name="player_statistics">Player Statistics</string>
+    <string name="breeding_record">Breeding Record</string>
+    <string name="reputation_titles">Reputation Titles</string>
+    <string name="view_player_stats">View Player Stats</string>
+    <string name="price_menu_amp_sell_puppies"><![CDATA[Price Menu & Sell Puppies]]></string>
+    <string name="litter_summary">Litter Summary</string>
+    <string name="breed_pair">Breed Pair</string>
+    <string name="view_parent_profiles">View Parent Profiles</string>
+    <string name="select_father">Select Father</string>
+    <string name="select_mother">Select Mother</string>
+    <string name="no_puppies_to_summarize">No puppies to summarize.</string>
 </resources>

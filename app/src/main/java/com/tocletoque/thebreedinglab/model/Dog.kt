@@ -6,7 +6,7 @@ import kotlin.math.max
 
 data class Dog(
     val name: String,
-    val sex: String,
+    val sex: Sex,
     val birthday: LocalDate,
     val B: String,
     val E: String,
@@ -25,6 +25,8 @@ data class Dog(
         B == "bb" -> "Brown coat"
         else -> "Black coat"
     }
+
+    val isYellowCoat = coatColor == "Yellow coat"
 
     val tailLength: String = if ("T" in tail) {
         "Long tail"
@@ -48,8 +50,8 @@ data class Dog(
         else -> "Affected"
     }
 
-    fun calculateWellnessScore(age: Int, sex: String, vararg genotypes: String): Int {
-        val agePenalty = if (sex == "Female") {
+    fun calculateWellnessScore(age: Int, sex: Sex, vararg genotypes: String): Int {
+        val agePenalty = if (sex == Sex.Female) {
             when {
                 age < 5 -> age * 3
                 age < 8 -> 5 * 3 + (age - 5) * 5
