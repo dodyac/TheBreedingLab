@@ -16,4 +16,5 @@
     <string name="puppy_price_menu">Puppy Price Menu</string>
     <string name="sell">Sell</string>
     <string name="sell_all_puppies">Sell All Puppies</string>
+    <string name="name">Name</string>
 </resources>

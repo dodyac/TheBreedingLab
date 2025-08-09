@@ -5,6 +5,7 @@ import com.acxdev.commonFunction.common.base.BaseSheet
 import com.tocletoque.thebreedinglab.databinding.SheetLitterSummaryBinding
 import com.tocletoque.thebreedinglab.model.Dog
 import com.tocletoque.thebreedinglab.model.Sex
+import com.tocletoque.thebreedinglab.model.uppercaseFirst
 
 class SheetLitterSummary: BaseSheet<SheetLitterSummaryBinding>() {
 
@@ -22,6 +23,7 @@ class SheetLitterSummary: BaseSheet<SheetLitterSummaryBinding>() {
 
         tvTotalPuppies.text = "Total Puppies: ${puppies.size}"
         tvSexRatio.text = "Sex Ratio (Males:Females) = ${puppies.count { it.sex == Sex.Male }}:${puppies.count { it.sex == Sex.Female }}"
+        tvDiluteYellowCoat.text = "Dilute Yellow Coat: ${puppies.count { it.isDiluteYellowCoat }}"
         tvYellowCoat.text = "Yellow Coat: ${puppies.count { it.isYellowCoat }}"
 
         val longTail = "Long tail"
@@ -33,6 +35,10 @@ class SheetLitterSummary: BaseSheet<SheetLitterSummaryBinding>() {
         tvHNPK.text = formatHealthText("HNPK", "hnpk") ?: ""
         tvCNM.text = formatHealthText("CNM", "cnm") ?: ""
         tvSD2.text = formatHealthText("SD2", "sd2") ?: ""
+
+        tvTemperament.text = "Temperament: ${categorySummary { it.temperament }}"
+        tvTrainability.text = "Trainability: ${categorySummary { it.trainability }}"
+        tvSociability.text = "Sociability: ${categorySummary { it.sociability }}"
     }
 
     private fun formatHealthText(label: String, key: String): String? {
@@ -52,4 +58,15 @@ class SheetLitterSummary: BaseSheet<SheetLitterSummaryBinding>() {
             null
         }
     }
+
+    fun categorySummary(selector: (Dog) -> String): String {
+        return puppies
+            .groupingBy(selector)
+            .eachCount()
+            .entries
+            .joinToString(", ") { (category, count) ->
+                "${category.replaceFirstChar { it.uppercase() }} ($count)"
+            }
+    }
+
 }

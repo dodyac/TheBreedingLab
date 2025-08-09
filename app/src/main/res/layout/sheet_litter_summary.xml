@@ -44,6 +44,13 @@
             tools:text="Sex Ratio (Males:Females) = 6:3" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvDiluteYellowCoat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d12dp"
+            tools:text="Dilute Yellow Coat: 9" />
+
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvYellowCoat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,7 +68,7 @@
             android:id="@+id/tvPRA"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="@dimen/d12dp"
             tools:text="PRA: Carrier (7), Affected (2)" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -91,5 +98,40 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             tools:text="SD2: Affected (5), Carrier (4)" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvTemperament"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d12dp"
+            tools:text="Temperament: Friendly (5)" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvTrainability"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="Trainability: Medium (5), Low (4)" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvSociability"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="Sociability: Medium (5), Low (4)" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvFertility"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="Fertility: Low (5)" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvSurvivability"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="Survivability: Medium (5)" />
     </LinearLayout>
 </LinearLayout>

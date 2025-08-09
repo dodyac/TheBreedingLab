@@ -19,7 +19,11 @@ object Constant {
             "Nm",
             "NN",
             "Nm",
-            1050
+            1050,
+            "friendly",
+            "high",
+            "medium",
+            false
         ),
         Dog(
             "Samson",
@@ -33,7 +37,11 @@ object Constant {
             "Nm",
             "NN",
             "NN",
-            1600
+            1600,
+            "reactive",
+            "medium",
+            "high",
+            false
         ),
         Dog(
             "Luna",
@@ -47,7 +55,11 @@ object Constant {
             "NN",
             "NN",
             "NN",
-            1750
+            1750,
+            "friendly",
+            "high",
+            "high",
+            true
         ),
         Dog(
             "Ollie",
@@ -61,7 +73,11 @@ object Constant {
             "Nm",
             "NN",
             "NN",
-            1000
+            1000,
+            "shy",
+            "low",
+            "low",
+            false
         ),
         Dog(
             "Bea",
@@ -75,7 +91,11 @@ object Constant {
             "NN",
             "NN",
             "Nm",
-            1350
+            1350,
+            "friendly",
+            "medium",
+            "medium",
+            false
         ),
         Dog(
             "Prince",
@@ -89,7 +109,11 @@ object Constant {
             "mm",
             "mm",
             "mm",
-            900
+            900,
+            "reactive",
+            "low",
+            "low",
+            true
         ),
     )
 }

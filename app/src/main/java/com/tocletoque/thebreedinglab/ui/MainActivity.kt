@@ -1,6 +1,5 @@
 package com.tocletoque.thebreedinglab.ui
 
-import android.widget.TextView
 import com.acxdev.commonFunction.common.base.BaseActivity
 import com.acxdev.commonFunction.model.Extra
 import com.acxdev.commonFunction.utils.ext.putExtras
@@ -14,7 +13,8 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializer
 import com.tocletoque.thebreedinglab.common.Constant
-import com.tocletoque.thebreedinglab.R
+import com.tocletoque.thebreedinglab.common.calculateDilutePattern
+import com.tocletoque.thebreedinglab.common.calculateEpigeneticTrait
 import com.tocletoque.thebreedinglab.databinding.ActivityMainBinding
 import com.tocletoque.thebreedinglab.model.Dog
 import com.tocletoque.thebreedinglab.model.Player
@@ -34,6 +34,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         item.json
                     )
                 )
+                sheetPuppyDetail.setOnSheetListener(object : SheetPuppyDetail.OnSheetListener {
+                    override fun onNameChanged(newName: String) {
+                        puppies.find { it == item }?.name = newName
+                        binding.rvPuppies.adapter?.notifyItemChanged(position)
+                    }
+                })
                 sheetPuppyDetail.show(supportFragmentManager)
             }
         })
@@ -205,19 +211,76 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     private fun makePuppy(mom: Dog, dad: Dog): List<Dog> {
+        val temperamentValues = listOf(
+            "shy", "friendly", "reactive"
+        )
+        val trainabilityValues = listOf(
+            "low", "medium", "high"
+        )
+        val sociabilityValues = listOf(
+            "low", "medium", "high"
+        )
+
         return (1..Random.Default.nextInt(4, 10)).map {
             val name = "Pup $it"
             val sex = Sex.entries.random()
+            val birthday = LocalDate.now()
+//          Genetic inheritance
+            val B = breedGenotype(mom.B, dad.B)
+            val E = breedGenotype(mom.E, dad.E)
+            val tail = breedGenotype(mom.tail, dad.tail)
+            val pra = breedGenotype(mom.pra, dad.pra)
+            val eic = breedGenotype(mom.eic, dad.eic)
+            val hnpk = breedGenotype(mom.hnpk, dad.hnpk)
+            val cnm = breedGenotype(mom.cnm, dad.cnm)
+            val sd2 = breedGenotype(mom.sd2, dad.sd2)
+
+            val temperament = calculateEpigeneticTrait(
+                parent1Trait = mom.temperament,
+                parent2Trait = dad.temperament,
+                traitValues = temperamentValues,
+                heritability = 0.6
+            )
+            val trainability = calculateEpigeneticTrait(
+                parent1Trait = mom.trainability,
+                parent2Trait = dad.trainability,
+                traitValues = trainabilityValues,
+                heritability = 0.7
+            )
+            val sociability = calculateEpigeneticTrait(
+                parent1Trait = mom.sociability,
+                parent2Trait = dad.sociability,
+                traitValues = sociabilityValues,
+                heritability = 0.5
+            )
+
+            val baseCoatColor : String = when {
+                E == "ee" -> "Yellow coat"
+                B == "bb" -> "Brown coat"
+                else -> "Black coat"
+            }
+            val hasDilute = calculateDilutePattern(
+                parent1HasDilute = mom.hasDilute,
+                parent2HasDilute = dad.hasDilute,
+                coatColor = baseCoatColor
+            )
+
             Dog(
-                name, sex, LocalDate.now(),
-                breedGenotype(mom.B, dad.B),
-                breedGenotype(mom.E, dad.E),
-                breedGenotype(mom.tail, dad.tail),
-                breedGenotype(mom.pra, dad.pra),
-                breedGenotype(mom.eic, dad.eic),
-                breedGenotype(mom.hnpk, dad.hnpk),
-                breedGenotype(mom.cnm, dad.cnm),
-                breedGenotype(mom.sd2, dad.sd2)
+                name = name,
+                sex = sex,
+                birthday = birthday,
+                B = B,
+                E = E,
+                tail = tail,
+                pra = pra,
+                eic = eic,
+                hnpk = hnpk,
+                cnm = cnm,
+                sd2 = sd2,
+                temperament = temperament,
+                trainability = trainability,
+                sociability = sociability,
+                hasDilute = hasDilute
             )
         }
     }
