@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:cardCornerRadius="2dp"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:padding="@dimen/d12dp"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvName"
+            android:layout_width="@dimen/d0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnSell"
+            android:layout_marginEnd="@dimen/d16dp"
+            android:layout_height="wrap_content"
+            tools:text="@string/app_name" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDetail"
+            android:layout_width="@dimen/d0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvName"
+            android:layout_marginTop="@dimen/d4dp"
+            app:layout_constraintEnd_toStartOf="@id/btnSell"
+            android:layout_marginEnd="@dimen/d16dp"
+            android:layout_height="wrap_content"
+            tools:text="Male | Wellness: 66" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvPrice"
+            android:layout_width="@dimen/d0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvDetail"
+            android:layout_marginTop="@dimen/d4dp"
+            android:textColor="#00DFA2"
+            app:layout_constraintEnd_toStartOf="@id/btnSell"
+            android:layout_marginEnd="@dimen/d16dp"
+            android:layout_height="wrap_content"
+            tools:text="Price: $330" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sell"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            app:backgroundTint="#00DFA2"
+            app:cornerRadius="6dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="16dp">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/puppy_price_menu"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.tocletoque.thebreedinglab.MaxHeightRecyclerView
+        android:id="@+id/rvPuppies"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d16dp"
+        android:scrollbars="vertical"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        tools:itemCount="3"
+        tools:layout_editor_absoluteX="16dp"
+        tools:listitem="@layout/item_puppy_sale" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvTotalLitterValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d16dp"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/rvPuppies"
+        tools:text="Total Litter Value: $1912" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSellAll"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d60dp"
+        android:text="@string/sell_all_puppies"
+        android:layout_marginTop="@dimen/d16dp"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        app:backgroundTint="#FF0060"
+        app:cornerRadius="6dp"
+        app:layout_constraintTop_toBottomOf="@id/tvTotalLitterValue" />
+</androidx.constraintlayout.widget.ConstraintLayout>

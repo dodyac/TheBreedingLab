@@ -10,6 +10,9 @@ import com.acxdev.commonFunction.utils.ext.view.set
 import com.acxdev.commonFunction.utils.ext.view.setVStack
 import com.acxdev.commonFunction.utils.ext.view.string
 import com.acxdev.commonFunction.utils.toast
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonPrimitive
+import com.google.gson.JsonSerializer
 import com.tocletoque.thebreedinglab.common.Constant
 import com.tocletoque.thebreedinglab.R
 import com.tocletoque.thebreedinglab.databinding.ActivityMainBinding
@@ -75,7 +78,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     if (gainedTitle) {
                         toast("CONGRATULATIONS! You've reached a new title: $newTitle", false)
                     }
-//                    Toast.makeText(this, "Bred ${puppies.size} puppies!", Toast.LENGTH_SHORT).show()
+//                    toast("Bred ${puppies.size} puppies!", false)
                     updateUI()
 
                     puppyAdapter.setAdapterList(puppies)
@@ -112,7 +115,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 toast("Please select both parents to view their profiles.")
             }
         }
-
         binding.btnLitterSummary.setOnClickListener {
             val sheetLitterSummary = SheetLitterSummary()
             sheetLitterSummary.putExtras(
@@ -123,7 +125,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             )
             sheetLitterSummary.show(supportFragmentManager)
         }
-
         binding.btnPlayerStats.setOnClickListener {
             val sheetPlayerStatistics = SheetPlayerStatistics()
             sheetPlayerStatistics.putExtras(
@@ -134,11 +135,73 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             )
             sheetPlayerStatistics.show(supportFragmentManager)
         }
+        btnPriceMenu.setOnClickListener {
+            if (puppies.isEmpty()) {
+                toast("You need to breed some dogs first")
+                return@setOnClickListener
+            }
+            val gson = GsonBuilder()
+                .registerTypeAdapter(LocalDate::class.java, JsonSerializer<LocalDate> { src, _, _ ->
+                    JsonPrimitive(src.toString()) // serialize as "yyyy-MM-dd"
+                })
+                .create()
+
+            val json = gson.toJson(puppies)
+            val sheetPuppyPriceMenu = SheetPuppyPriceMenu()
+            sheetPuppyPriceMenu.putExtras(
+                Extra(
+                    SheetPuppyPriceMenu.PUPPIES,
+                    json
+                )
+            )
+            sheetPuppyPriceMenu.setOnSheetListener(object : SheetPuppyPriceMenu.OnSheetListener {
+                override fun onSellPuppy(puppy: Dog) {
+                    val index = puppies.indexOf(puppy)
+                    val puppyPrice = puppy.calculatePuppyPrice()
+                    puppies.remove(puppy)
+                    puppyAdapter.notifyItemRemoved(index)
+                    val repGain = player.calculateSaleReputation(puppy, puppyPrice)
+                    player.totalPuppiesSold += 1
+                    val (gainedTitle, newTitle) = player.addReputation(repGain)
+                    toast("Sold ${puppy.name} for $${puppyPrice}!", false)
+                    toast("Gained $repGain Reputation Points!", false)
+                    if (gainedTitle) {
+                        toast("CONGRATULATIONS! You've reached a new title: $newTitle", false)
+                    }
+                    player.earn(puppyPrice)
+                    updateUI()
+                }
+
+                override fun onSellAll() {
+                    var totalEarned = 0
+                    var totalRepGain = 0
+                    val numPuppies = puppies.size
+
+                    for (puppy in puppies) {
+                        val price = puppy.calculatePuppyPrice()
+                        totalEarned += price
+                        totalRepGain += player.calculateSaleReputation(puppy, price)
+                    }
+                    puppies.clear()
+                    puppyAdapter.setAdapterList(puppies)
+                    val (gainedTitle, newTitle) = player.addReputation(totalRepGain)
+                    player.totalPuppiesSold += numPuppies
+                    toast("Sold $numPuppies puppies for $${totalEarned}!", false)
+                    toast("Gained $totalRepGain Reputation Points!", false)
+                    if (gainedTitle) {
+                        toast("CONGRATULATIONS! You've reached a new title: $newTitle", false)
+                    }
+                    player.earn(totalEarned)
+                    updateUI()
+                }
+            })
+            sheetPuppyPriceMenu.show(supportFragmentManager)
+        }
     }
 
     private fun updateUI() {
-        findViewById<TextView>(R.id.tvMoney).text = "Money: $${player.money}"
-        findViewById<TextView>(R.id.tvReputation).text = "Reputation: ${player.reputation} - ${player.getReputationTitle()}"
+        binding.tvMoney.text = "Money: $${player.money}"
+        binding.tvReputation.text = "Reputation: ${player.reputation} - ${player.getReputationTitle()}"
     }
 
     private fun makePuppy(mom: Dog, dad: Dog): List<Dog> {
@@ -154,8 +217,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 breedGenotype(mom.eic, dad.eic),
                 breedGenotype(mom.hnpk, dad.hnpk),
                 breedGenotype(mom.cnm, dad.cnm),
-                breedGenotype(mom.sd2, dad.sd2),
-                1000
+                breedGenotype(mom.sd2, dad.sd2)
             )
         }
     }

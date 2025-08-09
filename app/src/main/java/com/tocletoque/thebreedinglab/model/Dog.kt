@@ -16,7 +16,7 @@ data class Dog(
     val hnpk: String = "NN",
     val cnm: String = "NN",
     val sd2: String = "NN",
-    val price: Int
+    val price: Int = 0
 ) {
     val age: Int = Period.between(birthday, LocalDate.now()).years
 
@@ -89,5 +89,24 @@ data class Dog(
             appendLine("CNM: ${healthStatuses["cnm"]}")
             appendLine("SD2: ${healthStatuses["sd2"]}")
         }
+    }
+
+    fun calculatePuppyPrice(): Int {
+        val basePrice = wellnessScore * 5
+
+        var price = if (sex == Sex.Female) {
+            basePrice * 1.2
+        } else {
+            basePrice * 1.0
+        }
+
+        price *= when {
+            wellnessScore >= 96 -> 1.3
+            wellnessScore >= 90 -> 1.2
+            wellnessScore >= 80 -> 1.1
+            else -> 1.0
+        }
+
+        return maxOf(price.toInt(), 200)
     }
 }

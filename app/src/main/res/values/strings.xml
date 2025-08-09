@@ -13,4 +13,7 @@
     <string name="select_father">Select Father</string>
     <string name="select_mother">Select Mother</string>
     <string name="no_puppies_to_summarize">No puppies to summarize.</string>
+    <string name="puppy_price_menu">Puppy Price Menu</string>
+    <string name="sell">Sell</string>
+    <string name="sell_all_puppies">Sell All Puppies</string>
 </resources>

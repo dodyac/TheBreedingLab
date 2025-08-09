@@ -72,4 +72,19 @@ data class Player(
     fun earn(amount: Int) {
         money += amount
     }
+
+    fun calculateSaleReputation(puppy: Dog, price: Int): Int {
+        val baseRep = 1
+
+        val qualityRep = when {
+            puppy.wellnessScore >= 90 -> 3
+            puppy.wellnessScore >= 85 -> 2
+            puppy.wellnessScore >= 70 -> 1
+            else -> 0
+        }
+
+        val priceBonus = maxOf(0, (price - 500) / 200)
+
+        return baseRep + qualityRep + priceBonus
+    }
 }

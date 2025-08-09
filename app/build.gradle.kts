@@ -50,6 +50,7 @@ dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     implementation("com.github.dodyac:commonFunction:1.4.0")
     implementation("com.github.dodyac:Sqlitez:v0.1.24-alpha")
+    implementation("com.google.code.gson:gson:2.13.1")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
