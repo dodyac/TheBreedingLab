@@ -4,6 +4,7 @@ import com.tocletoque.thebreedinglab.common.calculateFertilityRate
 import com.tocletoque.thebreedinglab.common.calculateSurvivabilityRate
 import java.time.LocalDate
 import java.time.Period
+import java.util.UUID
 import kotlin.math.max
 
 data class Dog(
@@ -22,7 +23,10 @@ data class Dog(
     val temperament: String = "friendly",
     val trainability: String = "medium",
     val sociability: String = "medium",
-    val hasDilute: Boolean = false
+    val hasDilute: Boolean = false,
+    val mother: String? = null,
+    val father: String? = null,
+    val id: String = UUID.randomUUID().toString()
 ) {
     val age: Int = Period.between(birthday, LocalDate.now()).years
 
@@ -152,19 +156,32 @@ data class Dog(
             appendLine("Coat: $coatColor")
             appendLine("Tail: $tailLength")
             appendLine()
+            appendLine("=== HEALTH STATUS ===")
             appendLine("PRA: ${healthStatuses["pra"]}")
             appendLine("EIC: ${healthStatuses["eic"]}")
             appendLine("HNPK: ${healthStatuses["hnpk"]}")
             appendLine("CNM: ${healthStatuses["cnm"]}")
             appendLine("SD2: ${healthStatuses["sd2"]}")
+            appendLine("Wellness Score: $wellnessScore")
             appendLine()
+            appendLine("=== EPIGENETIC TRAITS ===")
             appendLine("Temperament: ${temperament.uppercaseFirst()}")
             appendLine("Trainability: ${trainability.uppercaseFirst()}")
             appendLine("Sociability: ${sociability.uppercaseFirst()}")
             appendLine("Fertility: ${getFertilityCategory().uppercaseFirst()} (${fertilityRate.toPercentageString()})")
             appendLine("Survivability: ${getSurvivabilityCategory().uppercaseFirst()} (${survivabilityRate.toPercentageString()})")
             appendLine()
-            appendLine("Wellness Score: $wellnessScore")
+            appendLine("=== PEDIGREE ===")
+
+            val mother = mother ?: "UNKNOWN"
+            val dad = father ?: "UNKNOWN"
+            val children = getChildren(name).takeIf { it.isNotEmpty() }?.joinToString(", ") ?: "None"
+            val fullSiblings = getFullSiblings(this@Dog).takeIf { it.isNotEmpty() }?.joinToString(", ") ?: "None"
+            val halfSiblings = getHalfSiblings(this@Dog).takeIf { it.isNotEmpty() }?.joinToString(", ") ?: "None"
+            appendLine("Parents: Mother: $mother | Father: $dad")
+            appendLine("Children: $children")
+            appendLine("Full Siblings: $fullSiblings")
+            appendLine("Half Siblings: $halfSiblings")
         }
     }
 
@@ -175,19 +192,32 @@ data class Dog(
             appendLine("Coat: $coatColor")
             appendLine("Tail: $tailLength")
             appendLine()
+            appendLine("=== HEALTH STATUS ===")
             appendLine("PRA: ${healthStatuses["pra"]}")
             appendLine("EIC: ${healthStatuses["eic"]}")
             appendLine("HNPK: ${healthStatuses["hnpk"]}")
             appendLine("CNM: ${healthStatuses["cnm"]}")
             appendLine("SD2: ${healthStatuses["sd2"]}")
+            appendLine("Wellness Score: $wellnessScore")
             appendLine()
+            appendLine("=== EPIGENETIC TRAITS ===")
             appendLine("Temperament: ${temperament.uppercaseFirst()}")
             appendLine("Trainability: ${trainability.uppercaseFirst()}")
             appendLine("Sociability: ${sociability.uppercaseFirst()}")
             appendLine("Fertility: ${getFertilityCategory().uppercaseFirst()} (${fertilityRate.toPercentageString()})")
             appendLine("Survivability: ${getSurvivabilityCategory().uppercaseFirst()} (${survivabilityRate.toPercentageString()})")
             appendLine()
-            appendLine("Wellness Score: $wellnessScore")
+            appendLine("=== PEDIGREE ===")
+
+            val mother = mother ?: "UNKNOWN"
+            val dad = father ?: "UNKNOWN"
+            val children = getChildren(name).takeIf { it.isNotEmpty() }?.joinToString(", ") ?: "None"
+            val fullSiblings = getFullSiblings(this@Dog).takeIf { it.isNotEmpty() }?.joinToString(", ") ?: "None"
+            val halfSiblings = getHalfSiblings(this@Dog).takeIf { it.isNotEmpty() }?.joinToString(", ") ?: "None"
+            appendLine("Parents: Mother: $mother | Father: $dad")
+            appendLine("Children: $children")
+            appendLine("Full Siblings: $fullSiblings")
+            appendLine("Half Siblings: $halfSiblings")
         }
     }
 

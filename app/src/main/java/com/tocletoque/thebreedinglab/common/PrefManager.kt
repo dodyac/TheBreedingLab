@@ -21,4 +21,8 @@ class PrefManager(private val context: Context) {
     fun show(type: Type) {
         preference.put(type.name, true)
     }
+
+    fun reset() {
+        preference.clear()
+    }
 }

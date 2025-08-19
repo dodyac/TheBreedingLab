@@ -21,6 +21,10 @@ import com.tocletoque.thebreedinglab.isGenesis
 import com.tocletoque.thebreedinglab.model.Dog
 import com.tocletoque.thebreedinglab.model.Player
 import com.tocletoque.thebreedinglab.model.Sex
+import com.tocletoque.thebreedinglab.model.areFullSiblings
+import com.tocletoque.thebreedinglab.model.areHalfSiblings
+import com.tocletoque.thebreedinglab.model.isParentChild
+import com.tocletoque.thebreedinglab.model.registerDog
 import com.tocletoque.thebreedinglab.ui.tutorial.SheetBasicControl
 import com.tocletoque.thebreedinglab.ui.tutorial.SheetFirstLitter
 import com.tocletoque.thebreedinglab.ui.tutorial.SheetWelcomeToTheGame
@@ -61,6 +65,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         PrefManager(this)
     }
 
+    override fun doFetch() {
+        prefManager.reset()
+        dogs.forEach {
+            registerDog(it)
+        }
+    }
+
     override fun ActivityMainBinding.setViews() {
         val moms = dogs.filter { it.sex == Sex.Female }.map { it.name.plus(" ($${it.price})")  }
         val dads = dogs.filter { it.sex == Sex.Male }.map { it.name.plus(" ($${it.price})") }
@@ -70,9 +81,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         updateUI()
 
-//        val isGuideShown = prefManager.isShown(PrefManager.Type.Welcome)
-
-        val isGuideShown = false
+        val isGuideShown = prefManager.isShown(PrefManager.Type.Welcome)
 
         if (!isGuideShown) {
             val sheetWelcomeToTheGame = SheetWelcomeToTheGame()
@@ -83,6 +92,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 }
             })
             sheetWelcomeToTheGame.show(supportFragmentManager)
+            prefManager.show(PrefManager.Type.Welcome)
         }
     }
 
@@ -95,6 +105,20 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             val dad = dogs.find { it.name == dadName }
 
             if (mom != null && dad != null) {
+                // Inbreeding checks
+                if (isParentChild(mom, dad)) {
+                    toast("Breeding between parent and child is not allowed.")
+                    return@setOnClickListener
+                }
+                if (areFullSiblings(mom, dad)) {
+                    toast( "Breeding between full siblings is not allowed.")
+                    return@setOnClickListener
+                }
+                if (areHalfSiblings(mom, dad)) {
+                    toast("Breeding between half siblings is not allowed.")
+                    return@setOnClickListener
+                }
+
                 val cost = mom.price + dad.price
                 if (player.spend(cost)) {
                     puppies.addAll(makePuppy(mom, dad))
@@ -141,6 +165,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     if (isFirstLitter) {
                         val sheetFirstLitter = SheetFirstLitter()
                         sheetFirstLitter.show(supportFragmentManager)
+                        prefManager.show(PrefManager.Type.FirstLitter)
                     }
                     updateUI()
 
@@ -328,7 +353,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 coatColor = baseCoatColor
             )
 
-            Dog(
+            val puppy = Dog(
                 name = name,
                 sex = sex,
                 birthday = birthday,
@@ -343,8 +368,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 temperament = temperament,
                 trainability = trainability,
                 sociability = sociability,
-                hasDilute = hasDilute
+                hasDilute = hasDilute,
+                mother = mom.name,
+                father = dad.name
             )
+            registerDog(puppy)
+
+            puppy
         }
     }
 

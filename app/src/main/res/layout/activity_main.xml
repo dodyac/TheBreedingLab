@@ -10,11 +10,19 @@
     tools:context=".ui.MainActivity">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvMoney"
+        android:id="@+id/tvSeason"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/d30dp"
+        android:text="Year 1 - Spring"
+        android:textSize="18sp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvMoney"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="Money: $2000"
         android:textSize="18sp" />
 
@@ -90,6 +98,13 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:text="@string/view_player_stats"
+        app:cornerRadius="6dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAdvanceSeason"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="@string/advance_season"
         app:cornerRadius="6dp" />
 
     <androidx.recyclerview.widget.RecyclerView

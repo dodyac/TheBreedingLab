@@ -25,4 +25,5 @@
     <string name="breeding_success">Breeding Success</string>
     <string name="first_litter_success">First Litter Success!</string>
     <string name="first_litter_desc">Congratulations on your first litter! One of these puppies will become special.\n\nYou must keep this puppy, which we\'ll name Genesis.</string>
+    <string name="advance_season">Advance Season</string>
 </resources>
