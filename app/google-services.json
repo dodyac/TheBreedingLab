@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1069155254488",
+    "project_id": "breeding-lab",
+    "storage_bucket": "breeding-lab.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1069155254488:android:b0a1e9daa2fa6c2e87d7ad",
+        "android_client_info": {
+          "package_name": "com.tocletoque.thebreedinglab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClAOVfUDzGA-dHN6oo5uWRw8ixPVweKNM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

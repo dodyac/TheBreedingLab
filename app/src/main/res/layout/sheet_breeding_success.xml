@@ -26,6 +26,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:id="@+id/tvMotherFertility"
+        tools:text="Mother's Fertility: {mom.get_fertility_category()} ({mom_current_fertility:.1%})" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:id="@+id/tvSurvivability"
+        tools:text="Survivability: {mom.get_survivability_category()} ({mom.survivability_rate:.1%})" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:id="@+id/tvGainReputation"
         tools:text="Gained $repGain Reputation Points!" />
 

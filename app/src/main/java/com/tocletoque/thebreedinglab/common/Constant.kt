@@ -1,10 +1,13 @@
 package com.tocletoque.thebreedinglab.common
 
 import com.tocletoque.thebreedinglab.model.Dog
+import com.tocletoque.thebreedinglab.model.GameTime
 import com.tocletoque.thebreedinglab.model.Sex
 import java.time.LocalDate
 
 object Constant {
+
+    val gameTime = GameTime()
 
     val dogList = listOf(
         Dog(
@@ -116,4 +119,9 @@ object Constant {
             true
         ),
     )
+
+    const val FOOD_COST_PER_DOG = 50
+    const val PUPPY_TRAINING_COST_PER_PUPPY = 40
+    const val GROOMING_COST_PER_DOG = 30
+
 }

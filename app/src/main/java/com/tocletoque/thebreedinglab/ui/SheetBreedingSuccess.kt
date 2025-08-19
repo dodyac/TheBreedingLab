@@ -2,20 +2,23 @@ package com.tocletoque.thebreedinglab.ui
 
 import com.acxdev.commonFunction.common.base.BaseSheet
 import com.acxdev.commonFunction.utils.ext.view.visible
+import com.tocletoque.thebreedinglab.common.Constant
 import com.tocletoque.thebreedinglab.databinding.SheetBreedingSuccessBinding
+import com.tocletoque.thebreedinglab.model.Dog
+import java.util.Locale
 
 class SheetBreedingSuccess: BaseSheet<SheetBreedingSuccessBinding>() {
 
     companion object {
-        const val MOM_NAME = "mom_name"
+        const val MOTHER = "mother"
         const val DAD_NAME = "dad_name"
         const val COST = "cost"
         const val GAIN_REPUTATION = "gain_reputation"
         const val NEW_TITLE = "new_title"
     }
 
-    private val momName by lazy {
-        arguments?.getString(MOM_NAME, "-")
+    private val mother by lazy {
+        getExtraAs(Dog::class.java, MOTHER)
     }
 
     private val dadName by lazy {
@@ -35,7 +38,12 @@ class SheetBreedingSuccess: BaseSheet<SheetBreedingSuccessBinding>() {
     }
 
     override fun SheetBreedingSuccessBinding.setViews() {
-        tvBred.text = "You Bred $momName and $dadName for $$cost"
+        val momCurrentFertility = mother.getCurrentFertilityRate(Constant.gameTime)
+        tvBred.text = "You Bred ${mother.name} and $dadName for $$cost"
+        tvMotherFertility.text = "Mother's Fertility: ${mother.getFertilityCategory()}  " +
+                "(${String.format(Locale.US, "%.1f%%", momCurrentFertility * 100)})"
+        tvSurvivability.text = "Survivability: ${mother.getSurvivabilityCategory()}  " +
+            "(${String.format(Locale.US, "%.1f%%", mother.survivabilityRate * 100)})"
         tvGainReputation.text = "Gained $gainReputation Reputation Points!"
 
         newTitle?.let {

@@ -40,6 +40,12 @@ data class Player(
         false
     }
 
+    fun spendCheck(amount: Int): Boolean = if (canAfford(amount)) {
+        true
+    } else {
+        false
+    }
+
     fun calculateBreedingReputation(puppies: List<Dog>): Int {
         val baseRep = 5
 

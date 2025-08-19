@@ -64,54 +64,120 @@
             android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnParentProfiles"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/view_parent_profiles"
-        app:cornerRadius="6dp" />
+        android:orientation="horizontal"
+        android:weightSum="2">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnBreed"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="@string/breed_pair"
-        app:cornerRadius="6dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnParentProfiles"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/d4dp"
+            android:layout_weight="1"
+            android:minHeight="@dimen/d60dp"
+            android:text="@string/view_parent_profiles"
+            app:cornerRadius="6dp" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnLitterSummary"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="@string/litter_summary"
-        app:cornerRadius="6dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBreed"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/d4dp"
+            android:layout_weight="1"
+            android:minHeight="@dimen/d60dp"
+            android:text="@string/breed_pair"
+            app:cornerRadius="6dp" />
+    </LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnPriceMenu"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="@string/price_menu_amp_sell_puppies"
-        app:cornerRadius="6dp" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnPlayerStats"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="@string/view_player_stats"
-        app:cornerRadius="6dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPuppyTraining"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/d4dp"
+            android:layout_weight="1"
+            android:minHeight="@dimen/d60dp"
+            android:text="@string/puppy_training_on"
+            app:cornerRadius="6dp" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnAdvanceSeason"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGrooming"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/d4dp"
+            android:layout_weight="1"
+            android:minHeight="@dimen/d60dp"
+            android:text="@string/grooming_on"
+            app:cornerRadius="6dp" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="@string/advance_season"
-        app:cornerRadius="6dp" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLitterSummary"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/d4dp"
+            android:layout_weight="1"
+            android:minHeight="@dimen/d60dp"
+            android:text="@string/litter_summary"
+            app:cornerRadius="6dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPriceMenu"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/d4dp"
+            android:layout_weight="1"
+            android:minHeight="@dimen/d60dp"
+            android:text="@string/price_menu_amp_sell_puppies"
+            app:cornerRadius="6dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPlayerStats"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/d4dp"
+            android:layout_weight="1"
+            android:minHeight="@dimen/d60dp"
+            android:text="@string/view_player_stats"
+            app:cornerRadius="6dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAdvanceSeason"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/d4dp"
+            android:layout_weight="1"
+            android:minHeight="@dimen/d60dp"
+            android:text="@string/advance_season"
+            app:cornerRadius="6dp" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPuppies"
         android:layout_width="match_parent"
-        tools:listitem="@layout/item_puppy"
-        tools:itemCount="3"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        tools:itemCount="3"
+        tools:listitem="@layout/item_puppy" />
 </LinearLayout>

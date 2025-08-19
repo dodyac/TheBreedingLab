@@ -1,5 +1,7 @@
 package com.tocletoque.thebreedinglab.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.acxdev.commonFunction.common.base.BaseActivity
 import com.acxdev.commonFunction.model.Extra
 import com.acxdev.commonFunction.utils.ext.putExtras
@@ -9,6 +11,8 @@ import com.acxdev.commonFunction.utils.ext.view.set
 import com.acxdev.commonFunction.utils.ext.view.setVStack
 import com.acxdev.commonFunction.utils.ext.view.string
 import com.acxdev.commonFunction.utils.toast
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializer
@@ -54,7 +58,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         })
     }
     private val dogs by lazy {
-        Constant.dogList
+        Constant.dogList.toMutableList()
     }
     private val player by lazy {
         Player()
@@ -64,8 +68,30 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private val prefManager by lazy {
         PrefManager(this)
     }
+    private var optInPuppyTraining = true
+    private var optInGrooming = true
 
     override fun doFetch() {
+        val firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = 0 // disable cache for development
+        }
+        firebaseRemoteConfig.setConfigSettingsAsync(configSettings)
+        firebaseRemoteConfig.fetchAndActivate()
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    val isPaid = firebaseRemoteConfig.getBoolean("is_paid")
+                    if (!isPaid) {
+                        finish()
+                    }
+                } else {
+                    finish()
+                }
+            }
+            .addOnFailureListener {
+                finish()
+            }
         prefManager.reset()
         dogs.forEach {
             registerDog(it)
@@ -73,12 +99,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun ActivityMainBinding.setViews() {
-        val moms = dogs.filter { it.sex == Sex.Female }.map { it.name.plus(" ($${it.price})")  }
-        val dads = dogs.filter { it.sex == Sex.Male }.map { it.name.plus(" ($${it.price})") }
-
-        tilMother.materialAutoComplete?.set(moms)
-        tilFather.materialAutoComplete?.set(dads)
-
+        configureParents()
         updateUI()
 
         val isGuideShown = prefManager.isShown(PrefManager.Type.Welcome)
@@ -96,8 +117,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         }
     }
 
+    private fun configureParents() {
+        val moms = dogs.filter { it.sex == Sex.Female }.map { it.name.plus(" ($${it.price})")  }
+        val dads = dogs.filter { it.sex == Sex.Male }.map { it.name.plus(" ($${it.price})") }
+
+        binding.tilMother.materialAutoComplete?.set(moms)
+        binding.tilFather.materialAutoComplete?.set(dads)
+    }
+
     override fun ActivityMainBinding.doAction() {
-        binding.btnBreed.setOnClickListener {
+        btnBreed.setOnClickListener {
             val momName = tilMother.string.substringBefore(" ($")
             val dadName = tilFather.string.substringBefore(" ($")
 
@@ -120,38 +149,53 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 }
 
                 val cost = mom.price + dad.price
-                if (player.spend(cost)) {
-                    puppies.addAll(makePuppy(mom, dad))
-                    val repGain = player.calculateBreedingReputation(puppies)
-                    val (gainedTitle, newTitle) = player.addReputation(repGain)
-                    player.totalPuppiesBred += puppies.size
-
-                    val sheetBreedingSuccess = SheetBreedingSuccess()
-
-                    sheetBreedingSuccess.putExtras(
-                        Extra(
-                            key = SheetBreedingSuccess.MOM_NAME,
-                            value = momName
-                        ),
-                        Extra(
-                            key = SheetBreedingSuccess.DAD_NAME,
-                            value = dadName
-                        ),
-                        Extra(
-                            key = SheetBreedingSuccess.COST,
-                            value = cost.toString()
-                        ),
-                        Extra(
-                            key = SheetBreedingSuccess.GAIN_REPUTATION,
-                            value = repGain.toString()
+                val canSpend = player.spendCheck(cost)
+                if (canSpend) {
+                    // Check breeding success based on mother's season-adjusted fertility rate
+                    val momCurrentFertility = mom.getCurrentFertilityRate(Constant.gameTime)
+                    if (Random.nextDouble() > momCurrentFertility) {
+                        val sheetBreedFailed = SheetBreedFailed()
+                        sheetBreedFailed.putExtras(
+                            Extra(
+                                SheetParentProfile.MOTHER,
+                                mom.json
+                            )
                         )
-                    )
-                    // Only add NEW_TITLE if gainedTitle == true
-                    if (gainedTitle) {
-                        sheetBreedingSuccess.putExtras(
-                            Extra(SheetBreedingSuccess.NEW_TITLE, newTitle)
-                        )
+                        sheetBreedFailed.show(supportFragmentManager)
+                        return@setOnClickListener
                     }
+                    if (player.spend(cost)) {
+                        puppies.addAll(makePuppy(mom, dad, momCurrentFertility))
+                        val repGain = player.calculateBreedingReputation(puppies)
+                        val (gainedTitle, newTitle) = player.addReputation(repGain)
+                        player.totalPuppiesBred += puppies.size
+
+                        val sheetBreedingSuccess = SheetBreedingSuccess()
+
+                        sheetBreedingSuccess.putExtras(
+                            Extra(
+                                key = SheetBreedingSuccess.MOTHER,
+                                value = mom.json
+                            ),
+                            Extra(
+                                key = SheetBreedingSuccess.DAD_NAME,
+                                value = dadName
+                            ),
+                            Extra(
+                                key = SheetBreedingSuccess.COST,
+                                value = cost.toString()
+                            ),
+                            Extra(
+                                key = SheetBreedingSuccess.GAIN_REPUTATION,
+                                value = repGain.toString()
+                            )
+                        )
+                        // Only add NEW_TITLE if gainedTitle == true
+                        if (gainedTitle) {
+                            sheetBreedingSuccess.putExtras(
+                                Extra(SheetBreedingSuccess.NEW_TITLE, newTitle)
+                            )
+                        }
 //                    toast("Breeding Success", false)
 //                    toast("You Bred $momName and $dadName for $$cost", false)
 //                    toast("Gained $repGain Reputation Points!", false)
@@ -160,17 +204,20 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 //                    }
 //                    toast("Bred ${puppies.size} puppies!", false)
 
-                    sheetBreedingSuccess.show(supportFragmentManager)
-                    val isFirstLitter = !prefManager.isShown(PrefManager.Type.FirstLitter)
-                    if (isFirstLitter) {
-                        val sheetFirstLitter = SheetFirstLitter()
-                        sheetFirstLitter.show(supportFragmentManager)
-                        prefManager.show(PrefManager.Type.FirstLitter)
-                    }
-                    updateUI()
+                        sheetBreedingSuccess.show(supportFragmentManager)
+                        val isFirstLitter = !prefManager.isShown(PrefManager.Type.FirstLitter)
+                        if (isFirstLitter) {
+                            val sheetFirstLitter = SheetFirstLitter()
+                            sheetFirstLitter.show(supportFragmentManager)
+                            prefManager.show(PrefManager.Type.FirstLitter)
+                        }
+                        updateUI()
 
-                    puppyAdapter.setAdapterList(puppies)
-                    rvPuppies.setVStack(puppyAdapter)
+                        puppyAdapter.setAdapterList(puppies)
+                        rvPuppies.setVStack(puppyAdapter)
+                    } else {
+                        toast("Not enough money! Breeding costs $$cost")
+                    }
                 } else {
                     toast("Not enough money! Breeding costs $$cost")
                 }
@@ -178,8 +225,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 toast("Please select both parents!")
             }
         }
-
-        binding.btnParentProfiles.setOnClickListener {
+        btnPuppyTraining.setOnClickListener {
+            toggleTraining()
+        }
+        btnGrooming.setOnClickListener {
+            toggleGrooming()
+        }
+        btnParentProfiles.setOnClickListener {
             val momName = tilMother.string.substringBefore(" ($")
             val dadName = tilFather.string.substringBefore(" ($")
 
@@ -203,7 +255,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 toast("Please select both parents to view their profiles.")
             }
         }
-        binding.btnLitterSummary.setOnClickListener {
+        btnLitterSummary.setOnClickListener {
             val sheetLitterSummary = SheetLitterSummary()
             sheetLitterSummary.putExtras(
                 Extra(
@@ -213,7 +265,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             )
             sheetLitterSummary.show(supportFragmentManager)
         }
-        binding.btnPlayerStats.setOnClickListener {
+        btnPlayerStats.setOnClickListener {
             val sheetPlayerStatistics = SheetPlayerStatistics()
             sheetPlayerStatistics.putExtras(
                 Extra(
@@ -286,14 +338,28 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             })
             sheetPuppyPriceMenu.show(supportFragmentManager)
         }
+        btnAdvanceSeason.setOnClickListener {
+            advanceSeason()
+        }
+    }
+
+    private fun toggleTraining() {
+        optInPuppyTraining = !optInPuppyTraining
+        binding.btnPuppyTraining.text = "Puppy Training: " + if (optInPuppyTraining) "ON" else "OFF"
+    }
+
+    private fun toggleGrooming() {
+        optInGrooming = !optInGrooming
+        binding.btnGrooming.text = "Grooming: " + if (optInGrooming) "ON" else "OFF"
     }
 
     private fun updateUI() {
         binding.tvMoney.text = "Money: $${player.money}"
         binding.tvReputation.text = "Reputation: ${player.reputation} - ${player.getReputationTitle()}"
+        binding.tvSeason.text = "Season: ${Constant.gameTime.seasonName} | Year ${Constant.gameTime.year}"
     }
 
-    private fun makePuppy(mom: Dog, dad: Dog): List<Dog> {
+    private fun makePuppy(mom: Dog, dad: Dog, momCurrentFertility: Double): List<Dog> {
         val temperamentValues = listOf(
             "shy", "friendly", "reactive"
         )
@@ -305,12 +371,19 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         )
         val isFirstLitter = !prefManager.isShown(PrefManager.Type.FirstLitter)
 
-        return (1..Random.Default.nextInt(4, 10)).mapIndexed { index, it ->
-            val name = if (index == 0 && isFirstLitter) {
-                "Genesis"
-            } else {
-                "Pup $it"
+        val baseLitterSize = Random.Default.nextInt(4, 10)
+        // Adjust litter size based on mother's season-adjusted fertility
+        val litterSize = when {
+            momCurrentFertility >= 0.95 -> {
+                baseLitterSize + Random.nextInt(0, 2) // upper bound is exclusive → 0 or 1
             }
+            momCurrentFertility < 0.90 -> {
+                maxOf(2, baseLitterSize - Random.nextInt(0, 3)) // 0,1,2
+            }
+            else -> baseLitterSize
+        }
+        val tempPuppies = (1..litterSize).map {
+            val name = "Pup $it"
             val sex = Sex.entries.random()
             val birthday = LocalDate.now()
 //          Genetic inheritance
@@ -372,10 +445,29 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 mother = mom.name,
                 father = dad.name
             )
-            registerDog(puppy)
 
             puppy
         }
+        // Apply survivability rate - some puppies may not survive
+        val survivedPuppies = tempPuppies.filter {
+            Random.nextDouble() <= mom.survivabilityRate
+        }.toMutableList()
+
+        // Ensure at least one puppy survives if any were born
+        if (tempPuppies.isNotEmpty() && survivedPuppies.isEmpty()) {
+            survivedPuppies.add(tempPuppies.first())
+        }
+        survivedPuppies.forEachIndexed { index, puppy ->
+            val name = if (index == 0 && isFirstLitter) {
+                "Genesis"
+            } else {
+                "Pup $index"
+            }
+            puppy.name = name
+            registerDog(puppy)
+        }
+
+        return survivedPuppies
     }
 
     private fun breedGenotype(mom: String, dad: String): String {
@@ -384,5 +476,123 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             dad.random()
         ).sortedBy { it.isLowerCase() }
         return alleles.joinToString("")
+    }
+
+    private fun advanceSeason() {
+        // 1) Quarterly expenses
+        val numDogs = dogs.size
+        val numPuppies = puppies.size
+        var totalExpense = numDogs * Constant.FOOD_COST_PER_DOG
+        if (optInPuppyTraining) {
+            totalExpense += numPuppies * Constant.PUPPY_TRAINING_COST_PER_PUPPY
+        }
+        if (optInGrooming) {
+            totalExpense += numDogs * Constant.GROOMING_COST_PER_DOG
+        }
+        if (totalExpense > 0) {
+            val canSpend = player.spendCheck(totalExpense)
+            if (canSpend) {
+                player.spend(totalExpense)
+
+            } else {
+                toast("Not enough money!")
+                return
+            }
+        }
+        // 2 Advance time
+        Constant.gameTime.advance()
+
+        // 3) Age progression and discovery for all dogs
+        dogs.forEach { it.advanceSeason() }
+        puppies.forEach { it.advanceSeason() }
+
+        // 4) Random events
+        val events = mutableListOf<String>()
+        val rng = Random
+
+        // Spontaneous loss
+        if (rng.nextDouble() < 0.03 && dogs.isNotEmpty()) {
+            val lost = dogs.random()
+            events.add("Loss: ${lost.name} passed away due to illness/old age.")
+            dogs.remove(lost)
+            // pedigree history is preserved
+        }
+
+        // Unexpected costs/gains/reputation (20% chance)
+        if (rng.nextDouble() < 0.20) {
+            val roll = rng.nextDouble()
+            when {
+                roll < 0.33 -> {
+                    val cost = rng.nextInt(80, 201)
+                    player.spend(cost)
+                    events.add("Unexpected cost: vacation dog sitter needed this season (-$$cost).")
+                }
+                roll < 0.66 -> {
+                    val gain = rng.nextInt(100, 251)
+                    player.earn(gain)
+                    events.add("Side income: you pet-sat this season (+$$gain).")
+                }
+                else -> {
+                    val rep = rng.nextInt(10, 31)
+                    player.reputation += rep
+                    events.add("Reputation boost: sold to an influencer who promoted you (+$rep rep).")
+                }
+            }
+        }
+
+        // 5) Seasonal events
+        when (Constant.gameTime.seasonName) {
+            "Spring" -> if (rng.nextDouble() < 0.5) {
+                val reward = rng.nextInt(150, 401)
+                val rep = rng.nextInt(20, 41)
+                player.earn(reward)
+                player.reputation += rep
+                events.add("Spring Dog Show: You placed well! +$$reward, +$rep reputation.")
+            }
+            "Summer" -> if (rng.nextDouble() < 0.4) {
+                val reward = rng.nextInt(100, 301)
+                val rep = rng.nextInt(10, 26)
+                player.earn(reward)
+                player.reputation += rep
+                events.add("Summer Breeding Challenge: Solid results! +$$reward, +$rep reputation.")
+            }
+            "Fall" -> if (rng.nextDouble() < 0.35) {
+                val reward = rng.nextInt(100, 251)
+                val rep = rng.nextInt(10, 21)
+                player.earn(reward)
+                player.reputation += rep
+                events.add("Fall Working Trials: Good showing! +$$reward, +$rep reputation.")
+            }
+            "Winter" -> if (rng.nextDouble() < 0.30) {
+                val reward = rng.nextInt(80, 181)
+                val rep = rng.nextInt(8, 19)
+                player.earn(reward)
+                player.reputation += rep
+                events.add("Winter Indoor Show: Minor prize! +$$reward, +$rep reputation.")
+            }
+        }
+
+        // 6) Update displays
+        updateUI()
+
+        // 7) Compose summary popup
+        val summaryLines = mutableListOf(
+            "Season advanced to ${Constant.gameTime.seasonName}, Year ${Constant.gameTime.year}",
+            "Expenses this season: $$totalExpense"
+        )
+        if (events.isNotEmpty()) {
+            summaryLines.add("\nEvents:")
+            summaryLines.addAll(events)
+        }
+
+        val sheetSeasonAdvance = SheetSeasonAdvance()
+        sheetSeasonAdvance.putExtras(
+            Extra(
+                SheetSeasonAdvance.NOTE,
+                summaryLines.joinToString("\n")
+            )
+        )
+        sheetSeasonAdvance.show(supportFragmentManager)
+        configureParents()
     }
 }

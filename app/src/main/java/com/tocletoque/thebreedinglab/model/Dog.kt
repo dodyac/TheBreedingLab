@@ -1,5 +1,6 @@
 package com.tocletoque.thebreedinglab.model
 
+import com.tocletoque.thebreedinglab.common.Constant
 import com.tocletoque.thebreedinglab.common.calculateFertilityRate
 import com.tocletoque.thebreedinglab.common.calculateSurvivabilityRate
 import java.time.LocalDate
@@ -59,7 +60,7 @@ data class Dog(
         "sd2" to getHealthStatus(sd2)
     )
 
-    val wellnessScore: Int = calculateEnhancedWellnessScore()
+    var wellnessScore: Int = calculateEnhancedWellnessScore()
 
     private fun getHealthStatus(genotype: String): String = when {
         genotype =="NN" -> "Clear"
@@ -67,16 +68,41 @@ data class Dog(
         else -> "Affected"
     }
 
-    val fertilityRate = calculateFertilityRate(
+    var fertilityRate = calculateFertilityRate(
         temperament = temperament,
         wellnessScore = wellnessScore.toDouble(),
         age = age
     )
-    val survivabilityRate = calculateSurvivabilityRate(
+    var survivabilityRate = calculateSurvivabilityRate(
         temperament = temperament,
         wellnessScore = wellnessScore.toDouble(),
         sociability = sociability
     )
+
+    // Seasonal and discovery state
+    var seasonsOld: Int = if (mother != null || father != null) 0 else 8
+    var traitsDiscovered: Boolean = if (mother != null || father != null) false else true
+
+    fun advanceSeason() {
+        seasonsOld += 1
+        if (!traitsDiscovered && seasonsOld >= 2) {
+            traitsDiscovered = true
+        }
+
+        // Recompute age by birthday is optional; we keep yearly progression by real date
+        // Refresh stats for new season (seasonal modifiers may change)
+        wellnessScore = calculateEnhancedWellnessScore()
+        fertilityRate = calculateFertilityRate(
+            temperament = temperament,
+            wellnessScore = wellnessScore.toDouble(),
+            age = age
+        )
+        survivabilityRate = calculateSurvivabilityRate(
+            temperament = temperament,
+            wellnessScore = wellnessScore.toDouble(),
+            sociability = sociability
+        )
+    }
 
     fun calculateEnhancedWellnessScore(): Int {
         // base wellness from genetics and age
@@ -103,14 +129,33 @@ data class Dog(
             else -> 0
         }
 
-        val enhancedWellness = baseWellness + tempBonus + trainBonus + socialBonus
+        var enhancedWellness = baseWellness + tempBonus + trainBonus + socialBonus
+
+        // Seasonal wellness adjustment
+        val seasonalDelta = SEASONAL_WELLNESS_DELTA[Constant.gameTime.seasonName] ?: 0
+        enhancedWellness += seasonalDelta
+
         return maxOf(0, minOf(100, enhancedWellness))
     }
 
+    fun getCurrentFertilityRate(gameTime: GameTime): Double {
+        val seasonal = SEASONAL_FERTILITY_DELTA[gameTime.seasonName] ?: 0.0
+        val adjusted = fertilityRate + seasonal
+        return adjusted.coerceIn(0.75, 0.98)
+    }
+
     fun getFertilityCategory(): String {
+//        return when {
+//            fertilityRate >= 0.95 -> "high"
+//            fertilityRate >= 0.90 -> "medium"
+//            else -> "low"
+//        }
+
+        val currentFertilityRate = getCurrentFertilityRate(Constant.gameTime)
+
         return when {
-            fertilityRate >= 0.95 -> "high"
-            fertilityRate >= 0.90 -> "medium"
+            currentFertilityRate >= 0.95 -> "high"
+            currentFertilityRate >= 0.90 -> "medium"
             else -> "low"
         }
     }
@@ -155,6 +200,7 @@ data class Dog(
             appendLine("Age: $age")
             appendLine("Coat: $coatColor")
             appendLine("Tail: $tailLength")
+            appendLine("Season Age: $seasonsOld | Traits Discovered: ${if (traitsDiscovered) "Yes" else "No"}")
             appendLine()
             appendLine("=== HEALTH STATUS ===")
             appendLine("PRA: ${healthStatuses["pra"]}")
@@ -165,9 +211,24 @@ data class Dog(
             appendLine("Wellness Score: $wellnessScore")
             appendLine()
             appendLine("=== EPIGENETIC TRAITS ===")
-            appendLine("Temperament: ${temperament.uppercaseFirst()}")
-            appendLine("Trainability: ${trainability.uppercaseFirst()}")
-            appendLine("Sociability: ${sociability.uppercaseFirst()}")
+            val temperament = if (traitsDiscovered) {
+                temperament.uppercaseFirst()
+            } else {
+                "Unknown"
+            }
+            val trainability = if (traitsDiscovered) {
+                trainability.uppercaseFirst()
+            } else {
+                "Unknown"
+            }
+            val sociability = if (traitsDiscovered) {
+                sociability.uppercaseFirst()
+            } else {
+                "Unknown"
+            }
+            appendLine("Temperament: $temperament")
+            appendLine("Trainability: $trainability")
+            appendLine("Sociability: $sociability")
             appendLine("Fertility: ${getFertilityCategory().uppercaseFirst()} (${fertilityRate.toPercentageString()})")
             appendLine("Survivability: ${getSurvivabilityCategory().uppercaseFirst()} (${survivabilityRate.toPercentageString()})")
             appendLine()
@@ -191,6 +252,7 @@ data class Dog(
             appendLine("Age: $age")
             appendLine("Coat: $coatColor")
             appendLine("Tail: $tailLength")
+            appendLine("Season Age: $seasonsOld | Traits Discovered: ${if (traitsDiscovered) "Yes" else "No"}")
             appendLine()
             appendLine("=== HEALTH STATUS ===")
             appendLine("PRA: ${healthStatuses["pra"]}")
@@ -201,9 +263,24 @@ data class Dog(
             appendLine("Wellness Score: $wellnessScore")
             appendLine()
             appendLine("=== EPIGENETIC TRAITS ===")
-            appendLine("Temperament: ${temperament.uppercaseFirst()}")
-            appendLine("Trainability: ${trainability.uppercaseFirst()}")
-            appendLine("Sociability: ${sociability.uppercaseFirst()}")
+            val temperament = if (traitsDiscovered) {
+                temperament.uppercaseFirst()
+            } else {
+                "Unknown"
+            }
+            val trainability = if (traitsDiscovered) {
+                trainability.uppercaseFirst()
+            } else {
+                "Unknown"
+            }
+            val sociability = if (traitsDiscovered) {
+                sociability.uppercaseFirst()
+            } else {
+                "Unknown"
+            }
+            appendLine("Temperament: $temperament")
+            appendLine("Trainability: $trainability")
+            appendLine("Sociability: $sociability")
             appendLine("Fertility: ${getFertilityCategory().uppercaseFirst()} (${fertilityRate.toPercentageString()})")
             appendLine("Survivability: ${getSurvivabilityCategory().uppercaseFirst()} (${survivabilityRate.toPercentageString()})")
             appendLine()
@@ -236,6 +313,8 @@ data class Dog(
             wellnessScore >= 80 -> 1.1
             else -> 1.0
         }
+        // Seasonal price multiplier
+        price *= SEASONAL_PRICE_MULTIPLIER[Constant.gameTime.seasonName] ?: 1.0
 
         return maxOf(price.toInt(), 200)
     }
