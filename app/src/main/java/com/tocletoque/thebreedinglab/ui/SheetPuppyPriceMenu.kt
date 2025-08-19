@@ -2,13 +2,16 @@ package com.tocletoque.thebreedinglab.ui
 
 import com.acxdev.commonFunction.common.base.BaseAdapter
 import com.acxdev.commonFunction.common.base.BaseSheet
+import com.acxdev.commonFunction.utils.ext.view.gone
 import com.acxdev.commonFunction.utils.ext.view.setVStack
+import com.acxdev.commonFunction.utils.ext.view.visible
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.google.gson.reflect.TypeToken
 import com.tocletoque.thebreedinglab.databinding.ItemPuppySaleBinding
 import com.tocletoque.thebreedinglab.databinding.SheetPuppyPriceMenuBinding
 import com.tocletoque.thebreedinglab.dp
+import com.tocletoque.thebreedinglab.isGenesis
 import com.tocletoque.thebreedinglab.model.Dog
 import java.time.LocalDate
 
@@ -77,6 +80,16 @@ class SheetPuppyPriceMenu: BaseSheet<SheetPuppyPriceMenuBinding>() {
             tvName.text = item.name
             tvDetail.text = "${item.sex} | Wellness: ${item.wellnessScore}"
             tvPrice.text = "Price: $${item.calculatePuppyPrice()}"
+
+            if (item.name.isGenesis) {
+                btnSell.isEnabled = false
+                btnSell.gone()
+                tvPrice.gone()
+            } else {
+                btnSell.isEnabled = true
+                btnSell.visible()
+                tvPrice.visible()
+            }
             btnSell.setOnClickListener {
                 onClick.onSellClick(item, position)
             }

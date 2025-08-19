@@ -17,4 +17,12 @@
     <string name="sell">Sell</string>
     <string name="sell_all_puppies">Sell All Puppies</string>
     <string name="name">Name</string>
+    <string name="welcome_to_the_breeding_lab">Welcome to The Breeding Lab!</string>
+    <string name="first_year">This is your first year as a dog breeder! Let me show you around.\n\nYou\'ll start with two dogs: Daisy and Prince.</string>
+    <string name="let_s_go_through_the_basic_controls">Let\'s go through the basic controls…</string>
+    <string name="use_spinner">Use the spinners to select parent dogs for breeding.\nView Parent Profiles shows detailed information about the selected dogs.\n\nBreed Pair will attempt to breed the selected dogs.\n\nLitter Summary shows statistics about the current litter.\n\nPrice Menu lets you sell your puppies.</string>
+    <string name="basic_controls">Basic Controls</string>
+    <string name="breeding_success">Breeding Success</string>
+    <string name="first_litter_success">First Litter Success!</string>
+    <string name="first_litter_desc">Congratulations on your first litter! One of these puppies will become special.\n\nYou must keep this puppy, which we\'ll name Genesis.</string>
 </resources>

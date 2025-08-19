@@ -51,6 +51,7 @@ dependencies {
     implementation("com.github.dodyac:commonFunction:1.4.0")
     implementation("com.github.dodyac:Sqlitez:v0.1.24-alpha")
     implementation("com.google.code.gson:gson:2.13.1")
+    implementation("com.github.skydoves:balloon:1.6.13")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

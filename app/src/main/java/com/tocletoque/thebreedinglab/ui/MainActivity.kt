@@ -13,12 +13,17 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializer
 import com.tocletoque.thebreedinglab.common.Constant
+import com.tocletoque.thebreedinglab.common.PrefManager
 import com.tocletoque.thebreedinglab.common.calculateDilutePattern
 import com.tocletoque.thebreedinglab.common.calculateEpigeneticTrait
 import com.tocletoque.thebreedinglab.databinding.ActivityMainBinding
+import com.tocletoque.thebreedinglab.isGenesis
 import com.tocletoque.thebreedinglab.model.Dog
 import com.tocletoque.thebreedinglab.model.Player
 import com.tocletoque.thebreedinglab.model.Sex
+import com.tocletoque.thebreedinglab.ui.tutorial.SheetBasicControl
+import com.tocletoque.thebreedinglab.ui.tutorial.SheetFirstLitter
+import com.tocletoque.thebreedinglab.ui.tutorial.SheetWelcomeToTheGame
 import java.time.LocalDate
 import kotlin.random.Random
 
@@ -52,6 +57,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
     private val puppies = mutableListOf<Dog>()
 
+    private val prefManager by lazy {
+        PrefManager(this)
+    }
+
     override fun ActivityMainBinding.setViews() {
         val moms = dogs.filter { it.sex == Sex.Female }.map { it.name.plus(" ($${it.price})")  }
         val dads = dogs.filter { it.sex == Sex.Male }.map { it.name.plus(" ($${it.price})") }
@@ -60,6 +69,21 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         tilFather.materialAutoComplete?.set(dads)
 
         updateUI()
+
+//        val isGuideShown = prefManager.isShown(PrefManager.Type.Welcome)
+
+        val isGuideShown = false
+
+        if (!isGuideShown) {
+            val sheetWelcomeToTheGame = SheetWelcomeToTheGame()
+            sheetWelcomeToTheGame.setOnSheetListener(object : SheetWelcomeToTheGame.OnSheetListener {
+                override fun onBasicControl() {
+                    val sheetBasicControl = SheetBasicControl()
+                    sheetBasicControl.show(supportFragmentManager)
+                }
+            })
+            sheetWelcomeToTheGame.show(supportFragmentManager)
+        }
     }
 
     override fun ActivityMainBinding.doAction() {
@@ -78,13 +102,46 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     val (gainedTitle, newTitle) = player.addReputation(repGain)
                     player.totalPuppiesBred += puppies.size
 
-                    toast("Breeding Success", false)
-                    toast("You Bred $momName and $dadName for $$cost", false)
-                    toast("Gained $repGain Reputation Points!", false)
+                    val sheetBreedingSuccess = SheetBreedingSuccess()
+
+                    sheetBreedingSuccess.putExtras(
+                        Extra(
+                            key = SheetBreedingSuccess.MOM_NAME,
+                            value = momName
+                        ),
+                        Extra(
+                            key = SheetBreedingSuccess.DAD_NAME,
+                            value = dadName
+                        ),
+                        Extra(
+                            key = SheetBreedingSuccess.COST,
+                            value = cost.toString()
+                        ),
+                        Extra(
+                            key = SheetBreedingSuccess.GAIN_REPUTATION,
+                            value = repGain.toString()
+                        )
+                    )
+                    // Only add NEW_TITLE if gainedTitle == true
                     if (gainedTitle) {
-                        toast("CONGRATULATIONS! You've reached a new title: $newTitle", false)
+                        sheetBreedingSuccess.putExtras(
+                            Extra(SheetBreedingSuccess.NEW_TITLE, newTitle)
+                        )
                     }
+//                    toast("Breeding Success", false)
+//                    toast("You Bred $momName and $dadName for $$cost", false)
+//                    toast("Gained $repGain Reputation Points!", false)
+//                    if (gainedTitle) {
+//                        toast("CONGRATULATIONS! You've reached a new title: $newTitle", false)
+//                    }
 //                    toast("Bred ${puppies.size} puppies!", false)
+
+                    sheetBreedingSuccess.show(supportFragmentManager)
+                    val isFirstLitter = !prefManager.isShown(PrefManager.Type.FirstLitter)
+                    if (isFirstLitter) {
+                        val sheetFirstLitter = SheetFirstLitter()
+                        sheetFirstLitter.show(supportFragmentManager)
+                    }
                     updateUI()
 
                     puppyAdapter.setAdapterList(puppies)
@@ -181,14 +238,15 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 override fun onSellAll() {
                     var totalEarned = 0
                     var totalRepGain = 0
-                    val numPuppies = puppies.size
+                    val puppiesSell = puppies.filter { !it.name.isGenesis }
+                    val numPuppies = puppiesSell.size
 
-                    for (puppy in puppies) {
+                    for (puppy in puppiesSell) {
                         val price = puppy.calculatePuppyPrice()
                         totalEarned += price
                         totalRepGain += player.calculateSaleReputation(puppy, price)
                     }
-                    puppies.clear()
+                    puppies.removeAll { it.name in puppiesSell.map { it.name } }
                     puppyAdapter.setAdapterList(puppies)
                     val (gainedTitle, newTitle) = player.addReputation(totalRepGain)
                     player.totalPuppiesSold += numPuppies
@@ -220,9 +278,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         val sociabilityValues = listOf(
             "low", "medium", "high"
         )
+        val isFirstLitter = !prefManager.isShown(PrefManager.Type.FirstLitter)
 
-        return (1..Random.Default.nextInt(4, 10)).map {
-            val name = "Pup $it"
+        return (1..Random.Default.nextInt(4, 10)).mapIndexed { index, it ->
+            val name = if (index == 0 && isFirstLitter) {
+                "Genesis"
+            } else {
+                "Pup $it"
+            }
             val sex = Sex.entries.random()
             val birthday = LocalDate.now()
 //          Genetic inheritance

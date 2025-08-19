@@ -4,6 +4,7 @@ import com.acxdev.commonFunction.common.base.BaseSheet
 import com.acxdev.commonFunction.utils.ext.view.setText
 import com.acxdev.commonFunction.utils.ext.view.string
 import com.tocletoque.thebreedinglab.databinding.SheetPuppyDetailBinding
+import com.tocletoque.thebreedinglab.isGenesis
 import com.tocletoque.thebreedinglab.model.Dog
 
 class SheetPuppyDetail: BaseSheet<SheetPuppyDetailBinding>() {
@@ -19,6 +20,7 @@ class SheetPuppyDetail: BaseSheet<SheetPuppyDetailBinding>() {
 
     override fun SheetPuppyDetailBinding.setViews() {
         tilName.setText(puppy.name)
+        tilName.isEnabled = puppy.name.isGenesis
         tvPuppy.text = puppy.getDetailWithoutName()
     }
 

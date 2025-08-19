@@ -5,7 +5,6 @@ import com.acxdev.commonFunction.common.base.BaseSheet
 import com.tocletoque.thebreedinglab.databinding.SheetLitterSummaryBinding
 import com.tocletoque.thebreedinglab.model.Dog
 import com.tocletoque.thebreedinglab.model.Sex
-import com.tocletoque.thebreedinglab.model.uppercaseFirst
 
 class SheetLitterSummary: BaseSheet<SheetLitterSummaryBinding>() {
 
