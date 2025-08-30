@@ -19,6 +19,7 @@ class SheetPuppyDetail: BaseSheet<SheetPuppyDetailBinding>() {
     }
 
     override fun SheetPuppyDetailBinding.setViews() {
+        ivDogImage.setImageResource(puppy.image)
         tilName.setText(puppy.name)
         tilName.isEnabled = !puppy.name.isGenesis
         tvPuppy.text = puppy.getDetailWithoutName()

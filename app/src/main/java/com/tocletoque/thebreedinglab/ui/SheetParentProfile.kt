@@ -19,7 +19,9 @@ class SheetParentProfile: BaseSheet<SheetParentProfileBinding>() {
     }
 
     override fun SheetParentProfileBinding.setViews() {
+        ivMotherImage.setImageResource(mother.image)
         tvMotherProfile.text = mother.getDetail()
+        ivFatherImage.setImageResource(father.image)
         tvFatherProfile.text = father.getDetail()
     }
 }

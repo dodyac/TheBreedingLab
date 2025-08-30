@@ -1,7 +1,5 @@
 package com.tocletoque.thebreedinglab.ui
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.acxdev.commonFunction.common.base.BaseActivity
 import com.acxdev.commonFunction.model.Extra
 import com.acxdev.commonFunction.utils.ext.putExtras
@@ -24,6 +22,7 @@ import com.tocletoque.thebreedinglab.databinding.ActivityMainBinding
 import com.tocletoque.thebreedinglab.isGenesis
 import com.tocletoque.thebreedinglab.model.Dog
 import com.tocletoque.thebreedinglab.model.Player
+import com.tocletoque.thebreedinglab.model.Reputation
 import com.tocletoque.thebreedinglab.model.Sex
 import com.tocletoque.thebreedinglab.model.areFullSiblings
 import com.tocletoque.thebreedinglab.model.areHalfSiblings
@@ -57,9 +56,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             }
         })
     }
-    private val dogs by lazy {
-        Constant.dogList.toMutableList()
-    }
+    private var dogs = Constant.dogList.filter {
+        it.unlockedAt == Reputation.NoviceBreeder
+    }.toMutableList()
     private val player by lazy {
         Player()
     }
@@ -93,13 +92,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 finish()
             }
         prefManager.reset()
-        dogs.forEach {
+        Constant.dogList.forEach {
             registerDog(it)
         }
     }
 
     override fun ActivityMainBinding.setViews() {
-        configureParents()
         updateUI()
 
         val isGuideShown = prefManager.isShown(PrefManager.Type.Welcome)
@@ -353,7 +351,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         binding.btnGrooming.text = "Grooming: " + if (optInGrooming) "ON" else "OFF"
     }
 
+    private fun filterDogsByReputation(): MutableList<Dog> {
+        val currentReputation = Reputation.entries.find {
+            it.displayName == player.getReputationTitle()
+        } ?: Reputation.NoviceBreeder
+        return Constant.dogList.filter { it.unlockedAt.ordinal <= currentReputation.ordinal }.toMutableList()
+    }
+
     private fun updateUI() {
+        dogs = filterDogsByReputation()
+        configureParents()
         binding.tvMoney.text = "Money: $${player.money}"
         binding.tvReputation.text = "Reputation: ${player.reputation} - ${player.getReputationTitle()}"
         binding.tvSeason.text = "Season: ${Constant.gameTime.seasonName} | Year ${Constant.gameTime.year}"
@@ -371,7 +378,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         )
         val isFirstLitter = !prefManager.isShown(PrefManager.Type.FirstLitter)
 
-        val baseLitterSize = Random.Default.nextInt(4, 10)
+        val baseLitterSize = Random.Default.nextInt(5, 10)
         // Adjust litter size based on mother's season-adjusted fertility
         val litterSize = when {
             momCurrentFertility >= 0.95 -> {
@@ -389,6 +396,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 //          Genetic inheritance
             val B = breedGenotype(mom.B, dad.B)
             val E = breedGenotype(mom.E, dad.E)
+            val D = breedGenotype(mom.D, dad.D)
             val tail = breedGenotype(mom.tail, dad.tail)
             val pra = breedGenotype(mom.pra, dad.pra)
             val eic = breedGenotype(mom.eic, dad.eic)
@@ -415,15 +423,26 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 heritability = 0.5
             )
 
-            val baseCoatColor : String = when {
-                E == "ee" -> "Yellow coat"
-                B == "bb" -> "Brown coat"
-                else -> "Black coat"
+            fun getBaseCoatColor(): String {
+                val base = when {
+                    E == "ee" -> "Yellow"
+                    B == "bb" -> "Brown"
+                    else -> "Black"
+                }
+
+                // Apply dilution only if dd
+                return when {
+                    D == "dd" && base == "Yellow" -> "Champagne"
+                    D == "dd" && base == "Brown" -> "Lilac"
+                    D == "dd" && base == "Black" -> "Blue"
+                    else -> base
+                } + " coat"
             }
-            val hasDilute = calculateDilutePattern(
+
+            val hasDilute = player.calculateDilutePattern(
                 parent1HasDilute = mom.hasDilute,
                 parent2HasDilute = dad.hasDilute,
-                coatColor = baseCoatColor
+                coatColor = getBaseCoatColor()
             )
 
             val puppy = Dog(
@@ -432,6 +451,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 birthday = birthday,
                 B = B,
                 E = E,
+                D = D,
                 tail = tail,
                 pra = pra,
                 eic = eic,
@@ -593,6 +613,5 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             )
         )
         sheetSeasonAdvance.show(supportFragmentManager)
-        configureParents()
     }
 }

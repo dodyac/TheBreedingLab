@@ -1,5 +1,6 @@
 package com.tocletoque.thebreedinglab.model
 
+import com.tocletoque.thebreedinglab.R
 import com.tocletoque.thebreedinglab.common.Constant
 import com.tocletoque.thebreedinglab.common.calculateFertilityRate
 import com.tocletoque.thebreedinglab.common.calculateSurvivabilityRate
@@ -14,6 +15,7 @@ data class Dog(
     val birthday: LocalDate,
     val B: String,
     val E: String,
+    val D: String,
     val tail: String,
     val pra: String = "NN",
     val eic: String = "NN",
@@ -27,20 +29,47 @@ data class Dog(
     val hasDilute: Boolean = false,
     val mother: String? = null,
     val father: String? = null,
-    val id: String = UUID.randomUUID().toString()
+    val id: String = UUID.randomUUID().toString(),
+    val unlockedAt: Reputation = Reputation.NoviceBreeder
 ) {
     val age: Int = Period.between(birthday, LocalDate.now()).years
 
-    val baseCoatColor : String = when {
-        E == "ee" -> "Yellow coat"
-        B == "bb" -> "Brown coat"
-        else -> "Black coat"
+//    val baseCoatColor : String = when {
+//        E == "ee" -> "Yellow coat"
+//        B == "bb" -> "Brown coat"
+//        else -> "Black coat"
+//    }
+
+    fun getBaseCoatColor(): String {
+        val base = when {
+            E == "ee" -> "Yellow"
+            B == "bb" -> "Brown"
+            else -> "Black"
+        }
+
+        // Apply dilution only if dd
+        return when {
+            D == "dd" && base == "Yellow" -> "Champagne"
+            D == "dd" && base == "Brown" -> "Lilac"
+            D == "dd" && base == "Black" -> "Blue"
+            else -> base
+        } + " coat"
+    }
+
+    val image = when(getBaseCoatColor()) {
+        "Yellow coat" -> R.drawable.yellow
+        "Brown coat" -> R.drawable.brown
+        "Black coat" -> R.drawable.black
+        "Champagne coat" -> R.drawable.champagne
+        "Lilac coat" -> R.drawable.lilac
+        "Blue coat" -> R.drawable.blue
+        else -> R.drawable.yellow
     }
 
     val coatColor: String = if (hasDilute) {
-        "Dilute $baseCoatColor"
+        "Dilute ${getBaseCoatColor()}"
     } else {
-        baseCoatColor
+        getBaseCoatColor()
     }
 
     val isDiluteYellowCoat = coatColor == "Dilute Yellow coat"

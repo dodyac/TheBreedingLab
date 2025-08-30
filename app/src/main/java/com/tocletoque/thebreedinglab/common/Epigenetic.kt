@@ -1,5 +1,6 @@
 package com.tocletoque.thebreedinglab.common
 
+import com.tocletoque.thebreedinglab.model.Player
 import java.util.Random
 import kotlin.math.max
 import kotlin.math.min
@@ -49,7 +50,20 @@ fun calculateEpigeneticTrait(
  * Calculate if offspring has dilute coat pattern based on parents and base coat color.
  * Returns true if dilute is present.
  */
-fun calculateDilutePattern(parent1HasDilute: Boolean, parent2HasDilute: Boolean, coatColor: String): Boolean {
+fun Player.calculateDilutePattern(parent1HasDilute: Boolean, parent2HasDilute: Boolean, coatColor: String): Boolean {
+    // Check breeder level
+    val level = getReputationTitle()
+    if (level !in listOf(
+            "Professional Breeder",
+            "Expert Breeder",
+            "Master Breeder",
+            "Elite Breeder",
+            "Legendary Breeder"
+        )
+    ) {
+        return false // lock dilute coats until Professional Breeder
+    }
+
     var chance = when {
         parent1HasDilute && parent2HasDilute -> 0.8
         parent1HasDilute || parent2HasDilute -> 0.5

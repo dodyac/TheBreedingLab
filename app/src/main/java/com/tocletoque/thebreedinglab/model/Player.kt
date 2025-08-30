@@ -7,26 +7,26 @@ data class Player(
     var totalPuppiesSold: Int = 0
 ) {
     val reputationMilestones = mapOf(
-        0 to "Novice Breeder",
-        300 to "Amateur Breeder",
-        600 to "Experienced Breeder",
-        1200 to "Professional Breeder",
-        2400 to "Expert Breeder",
-        4800 to "Master Breeder",
-        9600 to "Elite Breeder",
-        19200 to "Legendary Breeder"
+        0 to Reputation.NoviceBreeder,
+        300 to Reputation.AmateurBreeder,
+        600 to Reputation.ExperiencedBreeder,
+        1200 to Reputation.ProfessionalBreeder,
+        2400 to Reputation.ExpertBreeder,
+        4800 to Reputation.MasterBreeder,
+        9600 to Reputation.EliteBreeder,
+        19200 to Reputation.LegendaryBreeder
     )
 
     fun getReputationTitle(): String {
         return reputationMilestones.entries
             .filter { reputation >= it.key }
-            .maxByOrNull { it.key }?.value ?: "Novice Breeder"
+            .maxByOrNull { it.key }?.value?.displayName ?: Reputation.NoviceBreeder.displayName
     }
 
     fun getNextReputationMilestone(): Pair<String, Int>? {
         val sortedMilestones = reputationMilestones.entries.sortedBy { it.key }
         val next = sortedMilestones.firstOrNull { reputation < it.key }
-        return next?.let { it.value to (it.key - reputation) }
+        return next?.let { it.value.displayName to (it.key - reputation) }
     }
 
     private fun canAfford(amount: Int): Boolean {

@@ -30,7 +30,7 @@ class SheetPlayerStatistics: BaseSheet<SheetPlayerStatitisticBinding>() {
         }
 
         tvReputationTitles.text = player.reputationMilestones.map { (points, title) ->
-            val prefix = if (title == player.getReputationTitle()) "=> " else "     "
+            val prefix = if (title.displayName == player.getReputationTitle()) "=> " else "     "
             "$prefix$title ($points pts)"
         }.joinToString("\n")
     }
