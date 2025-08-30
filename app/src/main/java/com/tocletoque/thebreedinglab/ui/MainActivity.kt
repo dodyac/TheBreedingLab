@@ -16,12 +16,12 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializer
 import com.tocletoque.thebreedinglab.common.Constant
 import com.tocletoque.thebreedinglab.common.PrefManager
+import com.tocletoque.thebreedinglab.common.State
 import com.tocletoque.thebreedinglab.common.calculateDilutePattern
 import com.tocletoque.thebreedinglab.common.calculateEpigeneticTrait
 import com.tocletoque.thebreedinglab.databinding.ActivityMainBinding
 import com.tocletoque.thebreedinglab.isGenesis
 import com.tocletoque.thebreedinglab.model.Dog
-import com.tocletoque.thebreedinglab.model.Player
 import com.tocletoque.thebreedinglab.model.Reputation
 import com.tocletoque.thebreedinglab.model.Sex
 import com.tocletoque.thebreedinglab.model.areFullSiblings
@@ -44,11 +44,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     Extra(
                         SheetPuppyDetail.PUPPY,
                         item.json
+                    ),
+                    Extra(
+                        SheetPuppyDetail.PUPPIES_NAME,
+                        puppies.map { it.name }.json
                     )
                 )
                 sheetPuppyDetail.setOnSheetListener(object : SheetPuppyDetail.OnSheetListener {
                     override fun onNameChanged(newName: String) {
                         puppies.find { it == item }?.name = newName
+                        registerDog(item)
                         binding.rvPuppies.adapter?.notifyItemChanged(position)
                     }
                 })
@@ -59,8 +64,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private var dogs = Constant.dogList.filter {
         it.unlockedAt == Reputation.NoviceBreeder
     }.toMutableList()
+
     private val player by lazy {
-        Player()
+        State(this).getPlayer()
     }
     private val puppies = mutableListOf<Dog>()
 
@@ -72,6 +78,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun doFetch() {
         val firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+        puppies.addAll(State(this).getPuppies())
 
         val configSettings = remoteConfigSettings {
             minimumFetchIntervalInSeconds = 0 // disable cache for development
@@ -91,13 +98,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             .addOnFailureListener {
                 finish()
             }
-        prefManager.reset()
         Constant.dogList.forEach {
             registerDog(it)
         }
+        puppies.forEach {
+            registerDog(it)
+        }
+        puppyAdapter.setAdapterList(puppies)
     }
 
     override fun ActivityMainBinding.setViews() {
+        rvPuppies.setVStack(puppyAdapter)
         updateUI()
 
         val isGuideShown = prefManager.isShown(PrefManager.Type.Welcome)
@@ -124,6 +135,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun ActivityMainBinding.doAction() {
+        btnRestart.setOnClickListener {
+            prefManager.reset()
+            State(this@MainActivity).restart()
+            recreate()
+        }
         btnBreed.setOnClickListener {
             val momName = tilMother.string.substringBefore(" ($")
             val dadName = tilFather.string.substringBefore(" ($")
@@ -131,6 +147,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             val mom = dogs.find { it.name == momName }
             val dad = dogs.find { it.name == dadName }
 
+            if (puppies.size >= player.getMaximumPuppies()) {
+                toast("You have reached the maximum number of puppies!")
+                return@setOnClickListener
+            }
             if (mom != null && dad != null) {
                 // Inbreeding checks
                 if (isParentChild(mom, dad)) {
@@ -212,7 +232,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         updateUI()
 
                         puppyAdapter.setAdapterList(puppies)
-                        rvPuppies.setVStack(puppyAdapter)
                     } else {
                         toast("Not enough money! Breeding costs $$cost")
                     }
@@ -364,6 +383,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         binding.tvMoney.text = "Money: $${player.money}"
         binding.tvReputation.text = "Reputation: ${player.reputation} - ${player.getReputationTitle()}"
         binding.tvSeason.text = "Season: ${Constant.gameTime.seasonName} | Year ${Constant.gameTime.year}"
+        State(this@MainActivity).savePuppies(puppies)
+        State(this@MainActivity).savePlayer(player)
+    }
+
+    fun generateUniqueName(): String {
+        val usedNames = puppies.map { it.name }
+        val letters = ('A'..'Z')
+        var name: String
+        do {
+            name = "Pup-" + (1..3).map { letters.random() }.joinToString("")
+        } while (name in usedNames) // regenerate if already used
+        return name
     }
 
     private fun makePuppy(mom: Dog, dad: Dog, momCurrentFertility: Double): List<Dog> {
@@ -378,7 +409,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         )
         val isFirstLitter = !prefManager.isShown(PrefManager.Type.FirstLitter)
 
-        val baseLitterSize = Random.Default.nextInt(5, 10)
+        val baseLitterSize = Random.nextInt(5, 11)
         // Adjust litter size based on mother's season-adjusted fertility
         val litterSize = when {
             momCurrentFertility >= 0.95 -> {
@@ -390,7 +421,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             else -> baseLitterSize
         }
         val tempPuppies = (1..litterSize).map {
-            val name = "Pup $it"
+            val name = generateUniqueName()
             val sex = Sex.entries.random()
             val birthday = LocalDate.now()
 //          Genetic inheritance
@@ -481,7 +512,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             val name = if (index == 0 && isFirstLitter) {
                 "Genesis"
             } else {
-                "Pup $index"
+                generateUniqueName()
             }
             puppy.name = name
             registerDog(puppy)

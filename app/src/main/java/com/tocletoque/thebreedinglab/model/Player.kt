@@ -23,6 +23,12 @@ data class Player(
             .maxByOrNull { it.key }?.value?.displayName ?: Reputation.NoviceBreeder.displayName
     }
 
+    fun getMaximumPuppies(): Int {
+        return reputationMilestones.entries
+            .filter { reputation >= it.key }
+            .maxByOrNull { it.key }?.value?.maximumDog ?: Reputation.NoviceBreeder.maximumDog
+    }
+
     fun getNextReputationMilestone(): Pair<String, Int>? {
         val sortedMilestones = reputationMilestones.entries.sortedBy { it.key }
         val next = sortedMilestones.firstOrNull { reputation < it.key }

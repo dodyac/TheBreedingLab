@@ -1,5 +1,6 @@
 package com.tocletoque.thebreedinglab.ui
 
+import androidx.core.widget.doOnTextChanged
 import com.acxdev.commonFunction.common.base.BaseSheet
 import com.acxdev.commonFunction.utils.ext.view.setText
 import com.acxdev.commonFunction.utils.ext.view.string
@@ -11,11 +12,15 @@ class SheetPuppyDetail: BaseSheet<SheetPuppyDetailBinding>() {
 
     companion object {
         const val PUPPY = "puppy"
+        const val PUPPIES_NAME = "puppies_name"
     }
     private var onSheetListener: OnSheetListener? = null
 
     private val puppy by lazy {
         getExtraAs(Dog::class.java, PUPPY)
+    }
+    private val puppiesName by lazy {
+        getExtraAs(Array<String>::class.java, PUPPIES_NAME).toList()
     }
 
     override fun SheetPuppyDetailBinding.setViews() {
@@ -25,9 +30,21 @@ class SheetPuppyDetail: BaseSheet<SheetPuppyDetailBinding>() {
         tvPuppy.text = puppy.getDetailWithoutName()
     }
 
+    override fun SheetPuppyDetailBinding.doAction() {
+        tilName.editText?.doOnTextChanged { text, _, _, _ ->
+            if (text.toString().lowercase() in puppiesName.map { it.lowercase() }) {
+                tilName.error = "Name already taken"
+                tilName.isErrorEnabled = true
+            } else {
+                tilName.error = null
+                tilName.isErrorEnabled = false
+            }
+        }
+    }
+
     override fun onDestroyView() {
         val currentName = binding.tilName.string
-        if (currentName != puppy.name) {
+        if (currentName != puppy.name && currentName.lowercase() !in puppiesName.map { it.lowercase() }) {
             onSheetListener?.onNameChanged(currentName)
         }
         onSheetListener = null

@@ -6,8 +6,8 @@ import com.tocletoque.thebreedinglab.common.calculateFertilityRate
 import com.tocletoque.thebreedinglab.common.calculateSurvivabilityRate
 import java.time.LocalDate
 import java.time.Period
-import java.util.UUID
 import kotlin.math.max
+import kotlin.random.Random
 
 data class Dog(
     var name: String,
@@ -29,7 +29,6 @@ data class Dog(
     val hasDilute: Boolean = false,
     val mother: String? = null,
     val father: String? = null,
-    val id: String = UUID.randomUUID().toString(),
     val unlockedAt: Reputation = Reputation.NoviceBreeder
 ) {
     val age: Int = Period.between(birthday, LocalDate.now()).years
@@ -328,7 +327,7 @@ data class Dog(
     }
 
     fun calculatePuppyPrice(): Int {
-        val basePrice = wellnessScore * 5
+        val basePrice = wellnessScore * 7
 
         var price = if (sex == Sex.Female) {
             basePrice * 1.2
@@ -345,7 +344,7 @@ data class Dog(
         // Seasonal price multiplier
         price *= SEASONAL_PRICE_MULTIPLIER[Constant.gameTime.seasonName] ?: 1.0
 
-        return maxOf(price.toInt(), 200)
+        return maxOf(price.toInt(), 600)
     }
 }
 

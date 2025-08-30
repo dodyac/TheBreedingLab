@@ -9,30 +9,57 @@
     android:padding="16dp"
     tools:context=".ui.MainActivity">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvSeason"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/d30dp"
-        android:text="Year 1 - Spring"
-        android:textSize="18sp" />
+        android:layout_marginTop="@dimen/d30dp">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvMoney"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Money: $2000"
-        android:textSize="18sp" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="@dimen/d0dp"
+            android:layout_marginEnd="@dimen/d8dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@id/btnRestart"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvReputation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Reputation: 0 - Novice Breeder"
-        android:textSize="18sp" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvSeason"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Year 1 - Spring"
+                android:textSize="18sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvMoney"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Money: $2000"
+                android:textSize="18sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvReputation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Reputation: 0 - Novice Breeder"
+                android:textSize="18sp" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRestart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_weight="1"
+            android:text="Restart"
+            app:cornerRadius="6dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilMother"
